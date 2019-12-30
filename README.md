@@ -7,12 +7,6 @@ provider gives you what you pay for!
 Ideally, you could make this run on a raspberry pi at home, plugged on your box
 via Ethernet.
 
-# Environment
-
-pip install speedtest-cli
-pip install plotly
-pip install flask
-
 The project is made of two parts:
 
 1. `speed.py`, which will measure the bandwidth and store the results in a
@@ -21,3 +15,15 @@ The project is made of two parts:
 2. `app.py` is a simple Flask API which allows for visualizing the results. You
    should run it in the same folder as the `speed.py` script so that it can
    access the database (it can be in a separate `screen`).
+
+# Environment
+
+```
+pip install speedtest-cli
+pip install plotly
+pip install flask
+```
+
+# TODO
+
+Prune sqlite3 db.

@@ -1,39 +1,7 @@
 import json
 import speedtest
 import sqlite3
-import subprocess
 import time
-
-def fast():
-    # Start chromium in headless mode
-    ts = int(time.time())
-    proc = subprocess.Popen(
-        ['/usr/bin/chromium-browser', '--headless', '--repl', 'https://www.fast.com/'],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE)
-
-    # Give time to the speed test to terminate
-    time.sleep(60)
-
-    try:
-        outs, errs = proc.communicate(
-            input='window.document.querySelector("#speed-value").textContent\nquit\n'.encode('utf-8'),
-            timeout=5,
-        )
-    except subprocess.TimeoutExpired:
-        proc.kill()
-        outs, errs = proc.communicate()
-    else:
-        proc.terminate()
-
-    return {
-        'server': 'fast.com',
-        'ts': ts,
-        'ping': -1,
-        'download': int(json.loads(outs.decode('utf-8')[4:-5])['result']['value']),
-        'upload': -1,
-    }
 
 def speed():
     ts = int(time.time())
@@ -72,20 +40,16 @@ def main():
 
         # Start by measuring speedtest
         speedtest_result = speed()
-        # Wait a few seconds
-        time.sleep(15)
-        # Measure using fast.com
-        fast_result = fast()
 
         # Persist results
-        connection.executemany("""
+        connection.execute("""
             INSERT INTO RESULTS VALUES (
                 :server,
                 :ts,
                 :ping,
                 :download,
                 :upload);
-            """, (speedtest_result, fast_result))
+            """, (speedtest_result))
 
 if __name__ == '__main__':
     main()

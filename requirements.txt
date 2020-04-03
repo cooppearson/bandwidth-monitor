@@ -1,3 +1,5 @@
 plotly
 flask
 pandas
+schedule
+speedtest-cli
